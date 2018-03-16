@@ -20,5 +20,10 @@ const game = new Phaser.Game(
     })
 ;
 
-
+const CLASSES = {
+    MAGE: 'MAGE',
+    KNIGHT: 'KNIGHT',
+    ARCHER: 'ARCHER',
+    NECROMANZZER: 'NECROMANZZER'
+}
 
