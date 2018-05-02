@@ -1,12 +1,19 @@
-class Player {
+class Player extends Phaser.Sprite {
   constructor (data) {
+    super(game, 96, 96, 'player')
     this.preparePlayerStats(data)
     this.preparePlayerEquipment()
+    this.preparePlayerPerformance()
+  }
+  preparePlayerPerformance () {
+    game.add.existing(this)
+    game.physics.arcade.enable(this)
   }
 
   preparePlayerStats ({ NAME, ATTRIBUTE }) {
     // Set player class
     this.class = NAME
+    this.attributeName = ATTRIBUTE
 
     // Base stats
     this.hp = 30
@@ -32,26 +39,33 @@ class Player {
     this.inventory = []
   }
 
-  setEquipment (itemId, slot) {
+  move ({ x, y }) {
+    this.body.velocity.x = x / scaleRatio
+    this.body.velocity.y = y / scaleRatio
+  }
+  update () {
+
+  }
+
+  equipSelectedItem (itemId, slot) {
     if (this.equipment[slot]) {
       if (this.inventory.length < INVENTORY_SIZE) {
-        this.addInventoryItem(this.equipment[slot])
+        this.pickItemToInventory(this.equipment[slot])
         this.equipment[slot] = itemId
       } else {
-        this.removeItemFromEquipment(this.equipment[slot], slot)
+        this.unEquipSelectedItem(this.equipment[slot], slot)
       }
     } else {
       this.equipment[slot] = itemId
     }
   }
 
-  removeItemFromEquipment (itemId, slot) {
+  unEquipSelectedItem (itemId, slot) {
     this.inventory[slot] = null
     this.throwFromBackpack(itemId)
   }
 
-  addInventoryItem (itemId, itemName) {
-    console.log(this.inventory)
+  pickItemToInventory (itemId, itemName) {
     if (Array.isArray(this.inventory)) {
       if (this.inventory.length < INVENTORY_SIZE) {
         this.inventory.push(itemId)
@@ -62,9 +76,10 @@ class Player {
     } else {
       console.error('Inventory is not an array')
     }
+    console.log(this.inventory)
   }
 
-  removeItemFromInventory (itemId) {
+  dropItemFromInventory (itemId) {
     if (Array.isArray(this.inventory)) {
       const itemIndex = this.inventory.indexOf(itemId)
 
